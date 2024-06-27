@@ -7,7 +7,6 @@ import { createReadPackageHook } from '@pnpm/hooks.read-package-hook'
 import { type Lockfile } from '@pnpm/lockfile-file'
 import { type IncludedDependencies } from '@pnpm/modules-yaml'
 import { normalizeRegistries, DEFAULT_REGISTRIES } from '@pnpm/normalize-registries'
-import { type WorkspacePackages } from '@pnpm/resolver-base'
 import { type StoreController } from '@pnpm/store-controller-types'
 import {
   type SupportedArchitectures,
@@ -99,7 +98,6 @@ export interface StrictInstallOptions {
   updateToLatest?: boolean
   overrides: Record<string, string>
   ownLifecycleHooksStdio: 'inherit' | 'pipe'
-  workspacePackages: WorkspacePackages
   pruneStore: boolean
   virtualStoreDir?: string
   dir: string
@@ -230,7 +228,6 @@ const defaults = (opts: InstallOptions): StrictInstallOptions => {
     mergeGitBranchLockfiles: false,
     userAgent: `${packageManager.name}/${packageManager.version} npm/? node/${process.version} ${process.platform} ${process.arch}`,
     verifyStoreIntegrity: true,
-    workspacePackages: {},
     enableModulesDir: true,
     modulesCacheMaxAge: 7 * 24 * 60,
     resolveSymlinksInInjectedDirs: false,

@@ -3469,6 +3469,9 @@ importers:
       '@pnpm/read-projects-context':
         specifier: workspace:*
         version: link:../read-projects-context
+      '@pnpm/resolver-base':
+        specifier: workspace:*
+        version: link:../../resolving/resolver-base
       '@pnpm/types':
         specifier: workspace:*
         version: link:../../packages/types

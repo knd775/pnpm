@@ -9,11 +9,13 @@ import {
   type Modules,
 } from '@pnpm/modules-yaml'
 import { readProjectsContext } from '@pnpm/read-projects-context'
+import { type WorkspacePackages } from '@pnpm/resolver-base'
 import {
   type DepPath,
   DEPENDENCIES_FIELDS,
   type HoistedDependencies,
   type ProjectId,
+  type Project,
   type ProjectManifest,
   type ReadPackageHook,
   type Registries,
@@ -59,6 +61,7 @@ export interface PnpmContext {
   storeDir: string
   wantedLockfile: Lockfile
   wantedLockfileIsModified: boolean
+  workspacePackages: WorkspacePackages
   registries: Registries
 }
 
@@ -188,6 +191,7 @@ export async function getContext (
     storeDir: opts.storeDir,
     virtualStoreDir,
     virtualStoreDirMaxLength: importersContext.virtualStoreDirMaxLength ?? opts.virtualStoreDirMaxLength,
+    workspacePackages: arrayOfWorkspacePackagesToMap(opts.allProjects),
     ...await readLockfiles({
       autoInstallPeers: opts.autoInstallPeers,
       excludeLinksFromLockfile: opts.excludeLinksFromLockfile,
@@ -581,4 +585,17 @@ function getExtraNodePaths (
     return [path.join(virtualStoreDir, 'node_modules')]
   }
   return []
+}
+
+function arrayOfWorkspacePackagesToMap (
+  pkgs: Array<Pick<Project, 'manifest' | 'dir'>>
+): WorkspacePackages {
+  return pkgs.reduce((acc, pkg) => {
+    if (!pkg.manifest.name) return acc
+    if (!acc[pkg.manifest.name]) {
+      acc[pkg.manifest.name] = {}
+    }
+    acc[pkg.manifest.name][pkg.manifest.version ?? '0.0.0'] = pkg
+    return acc
+  }, {} as WorkspacePackages)
 }
